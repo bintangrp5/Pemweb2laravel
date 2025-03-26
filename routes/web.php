@@ -3,93 +3,34 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::get('/home', function () {
-    return "
-    <div Style = 'text-align: center;'>
-        Selamat datang di halaman home
-        <br><br>
-        <a href='/produk pria'>
-        Produk untuk Pria
-        </a>
-        <br></br>
-        <a href='/produk wanita'>
-        Produk untuk Wanita
-        </a>
-        <br></br>
-        <a href='/produk anak-anak'>
-        Produk untuk anak-anak
-        </a>
-        <br></br>
-        <a href='/equipment'>
-        Equipment
-        </a>
-        <br></br>
-        <a href='/koleksi'>
-        Koleksi
-        </a>
-        <br></br>
-        <a href='/notifikasi'>
-        notifikasi
-        </a>
-        <br></br>
-        <a href='/keranjang'>
-        Keranjang
-        </a>
-        <br></br>
-        <a href='/profil'>
-        Profil
-        <br></br>
-        <a href='https://eigeradventure.com/' target='_blank'>Website Eiger Adventure</a>
-    </div>
-    ";
-});
-
-Route::get('/produk pria', function () {
-    return 'Ini adalah halaman produk untuk pria';  
-});
-
-Route::get('/produk wanita', function () {
-    return 'Ini adalah halaman produk untuk wanita';
-});
-
-Route::get('/produk anak-anak', function () {
-    return 'Ini adalah halaman produk untuk anak';
-});
-
-Route::get('/equipment', function () {
-    return 'Ini adalah halaman equipment';
-});
-
-Route::get('/koleksi', function () {
-    return 'Ini adalah halaman koleksi';
-});
-
-Route::get('/notifikasi', function () {
-    return 'Ini adalah halaman notifikasi';
-});
-
-Route::get('/keranjang', function () {
-    return 'Ini adalah halaman keranjang';
-});
-
-Route::get('/profil', function () {
-    return 'Ini adalah halaman profil';
-});
-
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
-
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
-Route::middleware(['auth'])->group(function () {
-    Route::redirect('settings', 'settings/profile');
-
-    Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
-    Volt::route('settings/password', 'settings.password')->name('settings.password');
-    Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
-});
+Route::get('/', function(){
+    $title = "Homepage";
+   
+    return view('web.homepage',['title'=>$title]);
+   });
+   Route::get('products', function(){
+    $title = "Products";
+    return view('web.products',['title'=>$title]);
+   });
+   Route::get('product/{slug}', function($slug){
+    $title = "Single Product";
+    return view('web.single_product',['title'=>$title,'slug'=>$slug]);
+   });
+   Route::get('categories', function(){
+    $title = "Categories";
+    return view('web.categories',['title'=>$title]);
+   });
+   Route::get('category/{slug}', function($slug){
+    $title = "Single Category";
+    return view('web.single_category',['title'=>$title,'slug'=>$slug]);
+   });
+   Route::get('cart', function(){
+    $title = "Cart";
+    return view('web.cart',['title'=>$title]);
+   });
+   Route::get('checkout', function(){
+    $title = "Checkout";
+    return view('web.checkout',['title'=>$title]);
+   });
 
 require __DIR__.'/auth.php';
