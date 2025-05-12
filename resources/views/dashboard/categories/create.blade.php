@@ -14,7 +14,7 @@
         @csrf
 
         <flux:input label="Name" name="name" class="mb-3" placeholder="Product Category Name"/>
-        <flux:input label="Slug" name="slug" class="mb-3" placeholder="Product-category-name"/>
+        <flux:input label="Slug" name="slug" class="mb-3" placeholder="product-category-name"/>
         <flux:textarea label="Description" name="description" class="mb-3" placeholder="Product Category Description"/>
         <flux:input type="file" label="Image" name="image" class="mb-3"/>
         <flux:separator />

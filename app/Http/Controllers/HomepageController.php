@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\Categories;
+use App\Models\Product;
+
 
 use Illuminate\Http\Request;
 
@@ -13,12 +15,14 @@ class HomepageController extends Controller
     public function index()
     {
         $categories = Categories::all();
+        $products = Product::latest()->take(8)->get();
         $title = "homepage";
 
         
         return view('web.homepage',[
         'title' => $title,
         'categories' => $categories,
+        'products' => $products,
         ]);
        
     }
@@ -31,10 +35,15 @@ class HomepageController extends Controller
     }
 
     public function products()
-    {
-        $title = "Products";
-        return view('web.products',['title'=>$title]);
-    }
+{
+    $title = "Products";
+    $products = Product::latest()->paginate(12); // atau ->get() jika tidak ingin pakai pagination
+
+    return view('web.products', [
+        'title' => $title,
+        'products' => $products,
+    ]);
+}
     public function product($slug)
     {
         $title = "product";

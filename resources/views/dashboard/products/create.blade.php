@@ -20,6 +20,7 @@
                 <option value="{{ $category->slug }}">{{ $category->name }}</option>
             @endforeach
         </flux:select>
+        <flux:input label="Slug" name="slug" class="mb-3" placeholder="product-name" />
 
         <flux:textarea label="Description" name="description" class="mb-3" placeholder="Product Description" />
         <flux:input label="Price" name="price" type="number" class="mb-3" placeholder="Product Price" />
