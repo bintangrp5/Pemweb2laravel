@@ -24,7 +24,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         
-            // Tambahkan ini:
+
             $table->foreign('product_category_id')
                   ->references('id')->on('product_categories')
                   ->onDelete('set null')

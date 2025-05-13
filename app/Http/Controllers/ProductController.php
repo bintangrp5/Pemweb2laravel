@@ -24,7 +24,7 @@ class ProductController extends Controller
 
     public function create()
     {
-        $categories = Categories::all(); // Ambil semua kategori
+        $categories = Categories::all(); 
         return view('dashboard.products.create', compact('categories'));
     }
 
@@ -40,37 +40,27 @@ class ProductController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        // Ambil ID kategori dari slug
         $category = Categories::where('slug', $request->category_slug)->first();
 
-        // Menyimpan file gambar langsung ke folder public/images
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '.' .
-                $image->getClientOriginalExtension(); // Menentukan nama file gambar
-            $imagePath = public_path('images'); // Folder penyimpanan gambar
-
-            // Menyimpan gambar di folder public/images
+                $image->getClientOriginalExtension();
+            $imagePath = public_path('images'); 
             $image->move($imagePath, $imageName);
-
-            // Menyimpan path gambar relatif
             $imageUrl = 'images/' . $imageName;
         }
 
-        // Buat SKU unik
         $sku = strtoupper(Str::random(8));
         while (Product::where('sku', $sku)->exists()) {
             $sku = strtoupper(Str::random(8));
         }
 
-        // Buat slug produk dari nama produk
         $slug = Str::slug($request->slug);
         while (Product::where('slug', $slug)->exists()) {
-            $slug .= '-' . Str::random(3); // optional: jika ingin tetap menjamin unik
+            $slug .= '-' . Str::random(3); 
         }
 
-
-        // Simpan produk
         Product::create([
             'name' => $request->name,
             'slug' => $slug,
@@ -86,7 +76,12 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('successMessage', 'Data Berhasil Disimpan');
     }
-
+    
+    public function show(Product $product)
+    {
+        return view('dashboard.products.index', compact('product'));
+    }
+    
     public function edit(Product $product)
     {
         $categories = Categories::all();
@@ -105,10 +100,8 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        // Ambil ID kategori dari slug
         $category = Categories::where('slug', $request->category_slug)->first();
 
-        // Update slug (buat baru dari nama, lalu pastikan unik)
         $slug = Str::slug($validated['name']);
         $originalSlug = $slug;
         $counter = 1;
@@ -116,26 +109,20 @@ class ProductController extends Controller
             $slug = $originalSlug . '-' . Str::random(3);
         }
 
-        // Proses upload gambar jika ada
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $imagePath = public_path('images');
 
-            // Hapus gambar lama jika ada
             if ($product->image_url && file_exists(public_path($product->image_url))) {
                 unlink(public_path($product->image_url));
             }
-
-            // Pindahkan file gambar baru
             $image->move($imagePath, $imageName);
-
             $imageUrl = 'images/' . $imageName;
         } else {
-            $imageUrl = $product->image_url; // Gunakan gambar lama jika tidak diubah
+            $imageUrl = $product->image_url; 
         }
 
-        // Update data produk
         $product->update([
             'name' => $validated['name'],
             'slug' => $slug,
@@ -149,7 +136,6 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('successMessage', 'Data Berhasil Disimpan');
     }
-
 
     public function destroy(Product $product)
     {

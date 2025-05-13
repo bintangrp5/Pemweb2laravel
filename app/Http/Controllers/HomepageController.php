@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Categories;
 use App\Models\Product;
 
@@ -18,44 +19,50 @@ class HomepageController extends Controller
         $products = Product::latest()->take(8)->get();
         $title = "homepage";
 
-        
-        return view('web.homepage',[
-        'title' => $title,
-        'categories' => $categories,
-        'products' => $products,
+
+        return view('web.homepage', [
+            'title' => $title,
+            'categories' => $categories,
+            'products' => $products,
         ]);
-       
     }
     public function category($slug)
     {
-        $category = Categories::find($slug);
+        $category = Categories::where('slug', $slug)->with('products')->firstOrFail();
+
         return view('web.category_by_slug', [
-            'slug' => $slug,
-            'category' => $category]);
+            'category' => $category
+        ]);
     }
 
-    public function products()
-{
-    $title = "Products";
-    $products = Product::latest()->paginate(12); // atau ->get() jika tidak ingin pakai pagination
 
-    return view('web.products', [
-        'title' => $title,
-        'products' => $products,
-    ]);
-}
+    public function products()
+    {
+        $title = "Products";
+        $products = Product::with('category')->latest()->paginate(12);
+
+        return view('web.products', [
+            'title' => $title,
+            'products' => $products,
+        ]);
+    }
+
     public function product($slug)
     {
         $title = "product";
-        return view('web.product', ['title'=>$title,'slug'=>$slug]);
+        return view('web.product', ['title' => $title, 'slug' => $slug]);
     }
 
 
     public function categories()
     {
-        return view('web.categories');
+        $categories = Categories::all();
+
+        return view('web.categories', [
+            'categories' => $categories
+        ]);
     }
-  
+
     public function cart()
     {
         return view('web.cart');

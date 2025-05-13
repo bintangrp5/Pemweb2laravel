@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void {
         Schema::create('order_details', function (Blueprint $table) {
-            $table->bigIncrements('id'); // BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT
-            $table->unsignedBigInteger('order_id'); // FOREIGN KEY to orders
-            $table->unsignedBigInteger('product_id'); // FOREIGN KEY to products
-            $table->unsignedInteger('quantity')->default(1); // INTEGER UNSIGNED DEFAULT 1
-            $table->decimal('unit_price', 10, 2); // DECIMAL NOT NULL
-            $table->decimal('subtotal', 10, 2); // DECIMAL NOT NULL
-            $table->timestamps(); // created_at & updated_at (nullable by default)
+            $table->bigIncrements('id'); 
+            $table->unsignedBigInteger('order_id'); 
+            $table->unsignedBigInteger('product_id'); 
+            $table->unsignedInteger('quantity')->default(1); 
+            $table->decimal('unit_price', 10, 2); 
+            $table->decimal('subtotal', 10, 2);
+            $table->timestamps();
 
-            // Foreign key constraints
+         
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
