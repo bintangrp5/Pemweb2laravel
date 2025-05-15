@@ -22,7 +22,8 @@
 
             @endforeach
         </flux:select>
-
+        <flux:input label="Slug" name="slug" class="mb-3" placeholder="product-name" value="{{ old('slug', $product->slug) }}" />
+        <flux:input label="SKU" name="sku" class="mb-3" placeholder="Stock Keeping Unit" value="{{ old('sku', $product->sku) }}" />
         <flux:textarea label="Description" name="description" class="mb-3" placeholder="Product Description">{{ old('description', $product->description) }}</flux:textarea>
         <flux:input label="Price" name="price" type="number" class="mb-3" placeholder="Product Price" value="{{ old('price', $product->price) }}" />
         <flux:input label="Stock" name="stock" type="number" class="mb-3" placeholder="Available Stock" value="{{ old('stock', $product->stock) }}" />

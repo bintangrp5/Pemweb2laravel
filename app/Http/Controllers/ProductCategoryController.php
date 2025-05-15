@@ -24,7 +24,6 @@ class ProductCategoryController extends Controller
             'categories' => $categories,
             'q' => $request->q
         ]);
-
     }
 
     /**
@@ -100,7 +99,7 @@ class ProductCategoryController extends Controller
         $category = Categories::find($id);
         return view('dashboard.categories.edit', [
             'category' => $category
-    ]);
+        ]);
     }
 
     /**
@@ -144,9 +143,9 @@ class ProductCategoryController extends Controller
             );
             $category->image = $imagePath;
         }
-         $category->save();
+        $category->save();
         return redirect()->route('categories.index')
-            ->with('successMessage', 'Data Berhasil Disimpan');
+            ->with('successMessage', 'Data Berhasil Diperbarui');
     }
 
     /**
@@ -162,6 +161,5 @@ class ProductCategoryController extends Controller
                     'successMessage' => 'Data Berhasil Dihapus'
                 ]
             );
-
     }
 }

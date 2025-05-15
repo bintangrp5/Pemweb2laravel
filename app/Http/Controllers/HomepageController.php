@@ -35,24 +35,31 @@ class HomepageController extends Controller
         ]);
     }
 
+public function products(Request $request)
+{
+    $title = "Products";
+    $query = Product::with('category')
+        ->where('is_active', true) 
+        ->latest();
 
-    public function products()
-    {
-        $title = "Products";
-        $products = Product::with('category')->latest()->paginate(12);
-
-        return view('web.products', [
-            'title' => $title,
-            'products' => $products,
-        ]);
+    if ($request->has('q') && $request->q !== '') {
+        $query->where('name', 'like', '%' . $request->q . '%');
     }
+    $products = $query->paginate(12);
+
+    return view('web.products', compact('title', 'products'));
+}
 
     public function product($slug)
-    {
-        $title = "product";
-        return view('web.product', ['title' => $title, 'slug' => $slug]);
-    }
+{
+    $product = Product::where('slug', $slug)->with('category')->firstOrFail();
+    $title = $product->name;
 
+    return view('web.single_product', [
+        'title' => $title,
+        'product' => $product
+    ]);
+}
 
     public function categories()
     {

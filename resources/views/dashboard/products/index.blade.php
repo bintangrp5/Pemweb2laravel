@@ -82,10 +82,33 @@
                         </p>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <div
-                            class="w-full h-2 rounded {{ $product->is_active ? 'bg-green-500' : 'bg-red-500' }}"
-                            title="{{ $product->is_active ? 'Aktif' : 'Tidak Aktif' }}">
-                        </div>
+                        @php
+                        $isActive = $product->is_active;
+                        $statusClass = $isActive ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900';
+                        $statusText = $isActive ? 'Tersedia' : 'Tidak Aktif';
+                        $buttonText = $isActive ? 'Nonaktifkan' : 'Aktifkan';
+                        $isStockZero = $product->stock == 0;
+                        @endphp
+
+                        <span class="inline-block min-w-[80px] text-center px-3 py-1 rounded-full text-sm font-medium shadow-sm {{ $statusClass }}">
+                            {{ $statusText }}
+                        </span>
+
+                        {{-- Tombol toggle status --}}
+                        @if ($isStockZero && !$isActive)
+                        {{-- Stok 0 & tidak aktif, tombol hanya tampil disabled --}}
+                        <button type="button" class="bg-gray-100 text-gray-500 font-semibold py-1 px-3 rounded cursor-not-allowed mt-2" disabled>
+                            {{ $buttonText }}
+                        </button>
+                        @else
+                        <form action="{{ route('products.toggleStatus', $product->id) }}" method="POST" class="mt-2">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-3 rounded">
+                                {{ $buttonText }}
+                            </button>
+                        </form>
+                        @endif
                     </td>
 
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">

@@ -10,12 +10,13 @@ use App\Http\Controllers\ProductController;
 
 
 Route::get('/',[HomepageController::class,'index'])->name('home');
-Route::get('products', [HomepageController::class, 'products']);
+Route::get('products', [HomepageController::class, 'products'])->name('products');
 Route::get('product/{slug}', [HomepageController::class, 'product'])->name('product');
 Route::get('categories',[HomepageController::class, 'categories']);
 Route::get('category/{slug}', [HomepageController::class, 'category']);
 Route::get('cart', [HomepageController::class, 'cart']);
 Route::get('checkout', [HomepageController::class, 'checkout']);
+Route::patch('/products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggleStatus');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
