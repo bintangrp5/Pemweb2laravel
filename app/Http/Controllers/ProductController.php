@@ -34,8 +34,13 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        $messages = [
+            'name.unique' => 'Nama produk sudah digunakan, silakan gunakan nama lain.',
+
+        ];
+
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:products,name',  // Tambah unique di sini
             'category_slug' => 'required|string|exists:product_categories,slug',
             'slug' => 'required|string|max:255|unique:products,slug',
             'sku' => 'required|string|max:50|unique:products,sku',
@@ -44,6 +49,7 @@ class ProductController extends Controller
             'stock' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -94,8 +100,12 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
+        $messages = [
+            'name.unique' => 'Nama produk sudah digunakan, silakan gunakan nama lain.',
+
+        ];
         $rules = [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:products,name,' . $product->id,
             'category_slug' => 'required|string|exists:product_categories,slug',
             'slug' => 'required|string|max:255|unique:products,slug,' . $product->id,
             'sku' => 'required|string|max:50|unique:products,sku,' . $product->id,
