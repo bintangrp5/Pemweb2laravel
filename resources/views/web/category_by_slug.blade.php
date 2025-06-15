@@ -1,31 +1,42 @@
 <x-layout>
-    <div class="container mt-4">
-        <h3 class="mb-3 mt-5">Products in {{ $category->name }}</h3>
+    <x-slot name="title">{{ $category->name }}</x-slot>
+    <div class="container py-4">
+        <div class="row mb-4">
+            <div class="col">
+                <h3 class="mb-2" style="font-size: 1.7rem;">{{ $category->name }}</h3>
+                <p class="text-muted">{{ $category->description }}</p>
+            </div>
+        </div>
         <div class="row">
-            @forelse($category->products as $product)
+            @forelse($products as $product)
             <div class="col-md-3 mb-4">
-                <div class="card h-100 d-flex flex-column shadow-sm">
-                    <img src="{{ asset($product->image_url) }}" 
-                         alt="{{ $product->name }}" 
-                         class="card-img-top" 
-                         style="height: 200px; object-fit: cover; object-position: center;">
+                <div class="card product-card h-100 shadow-sm">
+                    <img src="{{ $product->image_url ? $product->image_url :
+'https://via.placeholder.com/350x200?text=No+Image' }}" class="card-img-top" alt="{{
+$product->name }}">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ $product->name }}</h5>
-                        <p class="card-text">{{ Str::limit($product->description, 50) }}</p>
-                        <p class="card-text"><strong>Rp {{ number_format($product->price, 0, ',', '.') }}</strong></p>
+                        <p class="card-text text-truncate">{{ $product->description
+}}</p>
                         <div class="mt-auto">
-                            <a href="{{ route('product', $product->slug) }}" class="btn btn-success w-100">Detail</a>
+                            <span class="fw-bold text-primary">Rp {{
+number_format($product->price, 0, ',', '.') }}</span>
+                            <a href="{{ route('product.show', $product->slug) }}"
+                                class="btn btn-outline-primary btn-sm float-end">Lihat Detail</a>
                         </div>
                     </div>
                 </div>
             </div>
             @empty
-            <div class="col-12">
-                <div class="alert alert-info">
-                    Produk Belum Tersedia di category ini.
-                </div>
+            <div class="col">
+                <div class="alert alert-info">Belum ada produk pada kategori
+                    ini.</div>
             </div>
             @endforelse
+            <div class="d-flex justify-content-center w-100 mt-4">
+                {{ $products->links('vendor.pagination.simple-bootstrap-5') }}
+            </div>
         </div>
     </div>
+
 </x-layout>

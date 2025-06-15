@@ -2,81 +2,99 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Categories;
 use App\Models\Product;
-
-
-use Illuminate\Http\Request;
-
-use function Livewire\Volt\title;
+use \Binafy\LaravelCart\Models\Cart;
 
 class HomepageController extends Controller
 {
-    // fungsi untuk menampilkan halaman homepage
+    private $themeFolder;
+    public function __construct()
+    {
+        $this->themeFolder = 'web';
+    }
     public function index()
     {
-        $categories = Categories::all();
-        $products = Product::latest()->take(8)->get();
-        $title = "homepage";
-
-
-        return view('web.homepage', [
-            'title' => $title,
+        $categories = Categories::latest()->take(4)->get();
+        $products = Product::paginate(20);
+        return view($this->themeFolder . '.homepage', [
             'categories' => $categories,
             'products' => $products,
+            'title' => 'Homepage'
+        ]);
+    }
+    public function products(Request $request)
+    {
+        $title = "Products";
+        $query = Product::query();
+        if ($request->has('search') && $request->search) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+        $products = $query->paginate(20);
+        return view($this->themeFolder . '.products', [
+            'title' => $title,
+            'products' => $products,
+        ]);
+    }
+    public function product($slug)
+    {
+        $product = Product::whereSlug($slug)->first();
+        if (!$product) {
+            return abort(404);
+        }
+        $relatedProducts = Product::where('product_category_id', $product->product_category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
+        return view($this->themeFolder . '.product', [
+            'slug' => $slug,
+            'product' => $product,
+            'relatedProducts' => $relatedProducts,
+        ]);
+    }
+    public function categories()
+    {
+        $categories = Categories::latest()->paginate(20);
+        return view($this->themeFolder . '.categories', [
+            'title' => 'Categories',
+            'categories' => $categories,
         ]);
     }
     public function category($slug)
     {
-        $category = Categories::where('slug', $slug)->with('products')->firstOrFail();
-
-        return view('web.category_by_slug', [
-            'category' => $category
-        ]);
+        $category = Categories::whereSlug($slug)->first();
+        if ($category) {
+            $products = Product::where('product_category_id', $category->id)->paginate(20);
+            return view($this->themeFolder . '.category_by_slug', [
+                'slug' => $slug,
+                'category' => $category,
+                'products' => $products,
+            ]);
+        } else {
+            return abort(404);
+        }
     }
-
-public function products(Request $request)
-{
-    $title = "Products";
-    $query = Product::with('category')
-        ->where('is_active', true) 
-        ->latest();
-
-    if ($request->has('q') && $request->q !== '') {
-        $query->where('name', 'like', '%' . $request->q . '%');
-    }
-    $products = $query->paginate(12);
-
-    return view('web.products', compact('title', 'products'));
-}
-
-    public function product($slug)
-{
-    $product = Product::where('slug', $slug)->with('category')->firstOrFail();
-    $title = $product->name;
-
-    return view('web.single_product', [
-        'title' => $title,
-        'product' => $product
-    ]);
-}
-
-    public function categories()
-    {
-        $categories = Categories::all();
-
-        return view('web.categories', [
-            'categories' => $categories
-        ]);
-    }
-
     public function cart()
     {
-        return view('web.cart');
+        $cart = Cart::query()
+            ->with(
+                [
+                    'items',
+                    'items.itemable'
+                ]
+            )
+            ->where('user_id', auth()->guard('customer')->user()->id)
+            ->first();
+        return view($this->themeFolder . '.cart', [
+            'title' => 'Cart',
+            'cart' => $cart,
+        ]);
     }
-
     public function checkout()
     {
-        return view('web.checkout');
+        return view($this->themeFolder.'.checkout',[
+            'title'=>'Checkout'
+        ]);
     }
 }
